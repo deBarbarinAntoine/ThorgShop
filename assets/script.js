@@ -12,6 +12,11 @@ async function getProducts() {
     }
 }
 
+function scrollToProducts() {
+    const pos = productsList.offsetTop;
+    window.scrollTo({ left: 0, top: pos, behavior: 'smooth'});
+}
+
 async function btnToProductsClick(event) {
     const products = await getProducts();
     products.forEach(product => {
@@ -35,10 +40,18 @@ async function btnToProductsClick(event) {
         productsList.appendChild(newProduct);
     })
     productsList.style.display = 'flex';
-    const pos = productsList.offsetTop;
-    window.scrollTo({ left: 0, top: pos, behavior: 'smooth'});
+    scrollToProducts();
     btnToProducts.removeEventListener('click', btnToProductsClick);
-    btnToProducts.addEventListener('click', () => window.scrollTo({ left: 0, top: pos, behavior: 'smooth'}));
+    btnToProducts.addEventListener('click', scrollToProducts);
 }
 
 btnToProducts.addEventListener('click', btnToProductsClick);
+
+async function getProductById(id){
+    const data = await fetch(`${baseUrl}/product/${id}`);
+    const jsonData = await data.json();
+    if (jsonData.status !== 'success') {
+        return null;
+    }
+    return jsonData.response;
+}
